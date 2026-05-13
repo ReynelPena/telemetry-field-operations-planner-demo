@@ -15,40 +15,46 @@
         <div class="brand-mark" aria-hidden="true">FO</div>
         <div>
           <strong>Field Operations Planner</strong>
-          <span>Telemetry scheduling demo</span>
+          <span>Industrial telematics</span>
         </div>
       </div>
 
       <nav class="nav-list">
         <button class="nav-link active" type="button" data-target="dashboard" aria-pressed="true">Dashboard</button>
         <button class="nav-link" type="button" data-target="intake" aria-pressed="false">Intake Queue</button>
-        <button class="nav-link" type="button" data-target="calendar" aria-pressed="false">Calendar</button>
-        <button class="nav-link" type="button" data-target="routes" aria-pressed="false">Route Planner</button>
+        <button class="nav-link" type="button" data-target="calendar" aria-pressed="false">Confirmed Calendar</button>
+        <button class="nav-link" type="button" data-target="planning" aria-pressed="false">Route Planner</button>
         <button class="nav-link" type="button" data-target="jobs" aria-pressed="false">Jobs</button>
+        <button class="nav-link" type="button" data-target="portal" aria-pressed="false">Customer Portal</button>
         <button class="nav-link" type="button" data-target="outbox" aria-pressed="false">Email Outbox</button>
+        <button class="nav-link" type="button" data-target="integrations" aria-pressed="false">Integrations</button>
+        <button class="nav-link" type="button" data-target="installers" aria-pressed="false">Installers</button>
+        <button class="nav-link" type="button" data-target="vehicles" aria-pressed="false">Vehicles</button>
+        <button class="nav-link" type="button" data-target="knowledge" aria-pressed="false">Knowledge Base</button>
+        <button class="nav-link" type="button" data-target="bot" aria-pressed="false">Technical Bot</button>
         <button class="nav-link" type="button" data-target="api" aria-pressed="false">API Preview</button>
       </nav>
 
       <div class="repo-panel">
-        <span>GitHub Pages</span>
-        <a href="https://github.com/ReynelPena/telemetry-field-operations-planner-demo" rel="noreferrer">Repository</a>
+        <span>Static GitHub Pages demo</span>
+        <a href="https://github.com/ReynelPena/telemetry-field-operations-planner-demo" rel="noreferrer">View repository</a>
       </div>
     </aside>
 
     <main class="content" id="main">
       <header class="topbar">
         <div>
-          <p class="eyebrow">Static demo</p>
-          <h1>Telemetry Field Operations Planner</h1>
-          <p>PO intake, readiness gates, schedule recommendations, route grouping, and reminder queues for industrial telematics installs.</p>
+          <p class="eyebrow">Demo workspace</p>
+          <h1 data-page-title>Smart Field Operations Planning System</h1>
+          <p data-page-subtitle>PO intake, required information control, AI recommendations, approval, scheduling, routing, and customer/dealer reminders.</p>
         </div>
         <div class="top-actions">
-          <a class="button" href="https://github.com/ReynelPena/telemetry-field-operations-planner-demo" rel="noreferrer">View code</a>
+          <button class="button" type="button" data-target-shortcut="jobs">Open sample job</button>
           <button class="button primary" type="button" data-action="approve-job">Approve top schedule</button>
         </div>
       </header>
 
-      <section class="view active" data-view="dashboard">
+      <section class="view active" data-view="dashboard" data-title="Smart Field Operations Planning System" data-subtitle="A static version of the original dashboard with representative operational data." tabindex="-1">
         <div class="metrics" aria-label="Operational metrics">
           <article class="metric">
             <span>Confirmed installs</span>
@@ -56,19 +62,24 @@
             <small>This week</small>
           </article>
           <article class="metric metric-alert">
-            <span>Blocked by missing info</span>
+            <span>Waiting required info</span>
             <strong data-count="blocked">1</strong>
-            <small>Customer or dealer action</small>
+            <small>Blocked before approval</small>
           </article>
           <article class="metric metric-warn">
             <span>Pending approval</span>
             <strong data-count="pending">1</strong>
-            <small>Coordinator review</small>
+            <small>Coordinator queue</small>
           </article>
           <article class="metric metric-good">
-            <span>Projected route savings</span>
+            <span>Route savings</span>
             <strong>$690</strong>
             <small>Next 45 days</small>
+          </article>
+          <article class="metric">
+            <span>Queued emails</span>
+            <strong data-count="outbox">3</strong>
+            <small>Simulated outbox</small>
           </article>
         </div>
 
@@ -76,8 +87,8 @@
           <section class="panel">
             <div class="panel-head">
               <div>
-                <h2>Schedule Queue</h2>
-                <p>Jobs are held until required operational data is complete.</p>
+                <h2>Operational Queue</h2>
+                <p>Jobs move from PO intake to pending approval only after the readiness gate is complete.</p>
               </div>
               <span class="status pending" data-queue-status>1 review</span>
             </div>
@@ -88,30 +99,37 @@
                     <th>PO</th>
                     <th>Customer</th>
                     <th>Location</th>
-                    <th>Window</th>
+                    <th>Schedule</th>
                     <th>Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr data-job-row="po-nc">
-                    <td>PO-NC-3001</td>
+                    <td><button class="text-link" type="button" data-target-shortcut="jobs">PO-NC-3001</button></td>
                     <td>Blue Ridge Equipment</td>
                     <td>Charlotte, NC</td>
-                    <td>May 19</td>
+                    <td>May 19, 08:00</td>
                     <td><span class="status pending" data-status-cell>Pending approval</span></td>
                   </tr>
                   <tr>
-                    <td>PO-IL-4001</td>
+                    <td><button class="text-link" type="button" data-target-shortcut="intake">PO-IL-4001</button></td>
                     <td>Midwest Food Logistics</td>
                     <td>Chicago, IL</td>
-                    <td>May 22</td>
+                    <td>May 22 window</td>
                     <td><span class="status blocked">Waiting info</span></td>
                   </tr>
                   <tr>
-                    <td>PO-TX-1003-A</td>
+                    <td>PO-TX-1001</td>
                     <td>Lone Star Distribution</td>
-                    <td>Fort Worth, TX</td>
-                    <td>May 13</td>
+                    <td>Dallas, TX</td>
+                    <td>May 12, 08:00</td>
+                    <td><span class="status confirmed">Confirmed</span></td>
+                  </tr>
+                  <tr>
+                    <td>PO-CA-2002</td>
+                    <td>Pacific Cold Storage</td>
+                    <td>Riverside, CA</td>
+                    <td>May 12, 08:00</td>
                     <td><span class="status confirmed">Confirmed</span></td>
                   </tr>
                 </tbody>
@@ -119,20 +137,18 @@
             </div>
           </section>
 
-          <section class="panel map-panel">
+          <section class="panel">
             <div class="panel-head">
               <div>
-                <h2>Route Group</h2>
-                <p>Dallas, Fort Worth, and Arlington work can be consolidated.</p>
+                <h2>Workflow</h2>
+                <p>The approval gate keeps incomplete work off the confirmed technician calendar.</p>
               </div>
-              <span class="status confirmed">12 units</span>
             </div>
-            <div class="route-map" aria-label="Texas route group visualization">
-              <div class="route-line line-one"></div>
-              <div class="route-line line-two"></div>
-              <div class="map-point dallas"><strong>Dallas</strong><span>10 Toyota LP</span></div>
-              <div class="map-point fort-worth"><strong>Fort Worth</strong><span>1 Hangcha</span></div>
-              <div class="map-point arlington"><strong>Arlington</strong><span>1 Yale</span></div>
+            <div class="flow">
+              <article><strong>1</strong><span>PO received from CRM or manual intake</span></article>
+              <article><strong>2</strong><span>Required site, vehicle, voltage, and tracking fields checked</span></article>
+              <article><strong>3</strong><span>Schedule and route recommendation generated</span></article>
+              <article><strong>4</strong><span>Coordinator approves before calendar confirmation</span></article>
             </div>
           </section>
         </div>
@@ -141,73 +157,111 @@
           <div class="panel-head">
             <div>
               <h2>Recommendation Snapshot</h2>
-              <p>Top schedule options balance customer date preference, installer coverage, workload, and routing opportunities.</p>
+              <p>Representative scoring balances requested date, workload, coverage state, skill fit, difficulty, and route grouping.</p>
             </div>
           </div>
           <div class="rank-grid">
             <article class="rank-card best">
               <span class="score">92</span>
               <div>
-                <h3>NC approval candidate</h3>
-                <p>Sofia Lopez, May 19, 08:00-12:40. Strong coverage fit and open workload.</p>
+                <h3>Blue Ridge Equipment</h3>
+                <p>Sofia Lopez, May 19 08:00-12:40. Coverage match for NC and enough capacity for two Crown electric forklifts.</p>
               </div>
             </article>
             <article class="rank-card">
               <span class="score">87</span>
               <div>
-                <h3>TX consolidated route</h3>
-                <p>Carlos Martinez + Mia Chen. Same-customer DFW work grouped in one field day.</p>
+                <h3>DFW Consolidated Route</h3>
+                <p>Carlos Martinez + Mia Chen can group Dallas, Fort Worth, and Arlington work for the same dealer.</p>
               </div>
             </article>
             <article class="rank-card">
               <span class="score">79</span>
               <div>
-                <h3>CA advanced install</h3>
-                <p>Priya Shah. High-difficulty electric forklift work with relay preparation.</p>
+                <h3>Riverside Advanced Work</h3>
+                <p>Priya Shah is the best fit because Jungheinrich electric units require relays and advanced diagnostics.</p>
               </div>
             </article>
           </div>
         </section>
       </section>
 
-      <section class="view" data-view="intake" hidden>
+      <section class="view" data-view="intake" data-title="Intake Queue" data-subtitle="Incomplete jobs remain visible but blocked until mandatory customer, site, vehicle, and production fields are complete." hidden tabindex="-1">
         <section class="panel">
           <div class="panel-head">
             <div>
-              <h2>Readiness Gate</h2>
-              <p>PO-IL-4001 remains blocked until required site, voltage, asset, and tracking details are available.</p>
+              <h2>Blocked Job Example</h2>
+              <p>PO-IL-4001 can receive recommendations, but cannot be confirmed until every required field is present.</p>
             </div>
             <button class="button" type="button" data-action="queue-reminder">Queue reminders</button>
           </div>
           <div class="readiness-grid">
-            <div>
+            <div class="readiness-meter">
               <span class="progress-label">Information complete</span>
               <div class="progress"><i style="width: 62%"></i></div>
               <strong>62%</strong>
+              <p>Current status: waiting_required_info</p>
             </div>
             <ul class="missing-list">
               <li><span>Installation address</span><strong>Missing</strong></li>
-              <li><span>Site contact phone</span><strong>Missing</strong></li>
+              <li><span>Site ZIP code</span><strong>Missing</strong></li>
+              <li><span>On-site contact phone</span><strong>Missing</strong></li>
               <li><span>Vehicle voltage</span><strong>Missing</strong></li>
+              <li><span>Vehicle asset IDs</span><strong>Missing</strong></li>
               <li><span>Shipment tracking</span><strong>Missing</strong></li>
             </ul>
             <div class="portal-card">
-              <span>Customer portal token</span>
+              <span>Generated customer/dealer portal</span>
               <code>/portal/9fd8b4c2-demo</code>
-              <p>The FastAPI app creates secure tokenized links for customer or dealer updates.</p>
+              <p>The live FastAPI app creates a tokenized link so the customer, dealer, sales rep, or scheduling team can fill missing fields.</p>
             </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Intake Records</h2>
+              <p>These sample records show how the queue separates incomplete jobs from jobs ready for coordinator approval.</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>PO</th>
+                  <th>Required Info</th>
+                  <th>AI Recommendation</th>
+                  <th>Next Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>PO-IL-4001</td>
+                  <td>62% complete</td>
+                  <td>Mike Johnson, May 22, 6 Toyota LP units</td>
+                  <td>Send missing info reminder</td>
+                </tr>
+                <tr>
+                  <td>PO-NC-3001</td>
+                  <td>100% complete</td>
+                  <td>Sofia Lopez, May 19, 2 Crown FC units</td>
+                  <td>Coordinator approval</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </section>
       </section>
 
-      <section class="view" data-view="calendar" hidden>
+      <section class="view" data-view="calendar" data-title="Confirmed Calendar" data-subtitle="The calendar only shows approved jobs with complete required information." hidden tabindex="-1">
         <section class="panel">
           <div class="panel-head">
             <div>
-              <h2>Confirmed Calendar</h2>
-              <p>Only approved and complete jobs appear on the technician calendar.</p>
+              <h2>May 2026 Technician Calendar</h2>
+              <p>Pending or blocked jobs can be previewed, but only coordinator-approved jobs count as confirmed.</p>
             </div>
-            <span class="status confirmed">May 2026</span>
+            <span class="status confirmed">Confirmed only</span>
           </div>
           <div class="calendar-grid">
             <div class="day-name">Sun</div>
@@ -219,105 +273,313 @@
             <div class="day-name">Sat</div>
             <article class="day muted"><strong>10</strong></article>
             <article class="day"><strong>11</strong></article>
-            <article class="day"><strong>12</strong><span>Dallas, TX</span><span>Riverside, CA</span></article>
-            <article class="day"><strong>13</strong><span>Fort Worth, TX</span><span>Arlington, TX</span></article>
+            <article class="day"><strong>12</strong><span>08:00 Dallas, TX - Carlos</span><span>08:00 Riverside, CA - Priya</span></article>
+            <article class="day"><strong>13</strong><span>09:00 Fort Worth, TX - Mia</span><span>11:00 Arlington, TX - Ethan</span></article>
             <article class="day"><strong>14</strong></article>
             <article class="day"><strong>15</strong></article>
             <article class="day muted"><strong>16</strong></article>
             <article class="day muted"><strong>17</strong></article>
             <article class="day"><strong>18</strong></article>
-            <article class="day"><strong>19</strong><span data-calendar-nc>Charlotte, NC pending</span></article>
+            <article class="day"><strong>19</strong><span data-calendar-nc>Charlotte, NC pending approval</span></article>
             <article class="day"><strong>20</strong></article>
             <article class="day"><strong>21</strong></article>
-            <article class="day"><strong>22</strong><span>Chicago, IL blocked</span></article>
+            <article class="day"><strong>22</strong><span class="blocked-event">Chicago, IL waiting info</span></article>
             <article class="day muted"><strong>23</strong></article>
           </div>
         </section>
       </section>
 
-      <section class="view" data-view="routes" hidden>
+      <section class="view" data-view="planning" data-title="Route Planner" data-subtitle="Open jobs are grouped by nearby geography, date windows, installer coverage, and field complexity." hidden tabindex="-1">
         <section class="panel">
           <div class="panel-head">
             <div>
-              <h2>Route Planner</h2>
-              <p>Grouping favors nearby jobs with compatible date windows, installer coverage, and work complexity.</p>
+              <h2>Route Opportunities</h2>
+              <p>Filter the hardcoded route examples by region to see the grouping logic.</p>
             </div>
             <div class="segments" role="group" aria-label="Route region filter">
               <button class="segment active" type="button" data-filter="all">All</button>
               <button class="segment" type="button" data-filter="tx">TX</button>
               <button class="segment" type="button" data-filter="ca">CA</button>
+              <button class="segment" type="button" data-filter="nc">NC</button>
             </div>
           </div>
-          <div class="route-list">
-            <article class="route-card" data-route-region="tx">
-              <div>
-                <h3>Dallas - Fort Worth consolidated route</h3>
-                <p>3 jobs, 12 units, 2-person crew, 98 miles saved.</p>
-              </div>
-              <strong>$318</strong>
+          <div class="layout two">
+            <div class="route-list">
+              <article class="route-card" data-route-region="tx">
+                <div>
+                  <h3>Dallas - Fort Worth consolidated route</h3>
+                  <p>3 jobs, 12 units, 2-person crew, same dealer, 98 miles saved.</p>
+                </div>
+                <strong>$318</strong>
+              </article>
+              <article class="route-card" data-route-region="ca">
+                <div>
+                  <h3>Riverside advanced electric work</h3>
+                  <p>1 job, 4 Jungheinrich units, relay kit required, lead technician only.</p>
+                </div>
+                <strong>$0</strong>
+              </article>
+              <article class="route-card" data-route-region="nc">
+                <div>
+                  <h3>Charlotte approval candidate</h3>
+                  <p>2 Crown electric units, can pair with Georgia/Tennessee coverage if the window moves.</p>
+                </div>
+                <strong>$146</strong>
+              </article>
+            </div>
+            <div class="route-map" aria-label="Texas route group visualization">
+              <div class="route-line line-one"></div>
+              <div class="route-line line-two"></div>
+              <div class="map-point dallas"><strong>Dallas</strong><span>10 Toyota LP</span></div>
+              <div class="map-point fort-worth"><strong>Fort Worth</strong><span>1 Hangcha</span></div>
+              <div class="map-point arlington"><strong>Arlington</strong><span>1 Yale</span></div>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section class="view" data-view="jobs" data-title="Jobs" data-subtitle="Each job keeps PO, site, vehicle, production tracking, readiness, recommendation, and approval data together." hidden tabindex="-1">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Sample Work Orders</h2>
+              <p>Select a sample row to populate the static job detail panel.</p>
+            </div>
+          </div>
+          <div class="layout two">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>PO</th>
+                    <th>Customer</th>
+                    <th>Vehicle</th>
+                    <th>Units</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><button class="text-link" type="button" data-job-detail="tx">PO-TX-1001</button></td>
+                    <td>Lone Star Distribution</td>
+                    <td>Toyota LP</td>
+                    <td>10</td>
+                    <td><span class="status confirmed">Confirmed</span></td>
+                  </tr>
+                  <tr>
+                    <td><button class="text-link" type="button" data-job-detail="ca">PO-CA-2002</button></td>
+                    <td>Pacific Cold Storage</td>
+                    <td>Jungheinrich EFG</td>
+                    <td>4</td>
+                    <td><span class="status confirmed">Confirmed</span></td>
+                  </tr>
+                  <tr>
+                    <td><button class="text-link" type="button" data-job-detail="nc">PO-NC-3001</button></td>
+                    <td>Blue Ridge Equipment</td>
+                    <td>Crown FC</td>
+                    <td>2</td>
+                    <td><span class="status pending" data-job-nc-status>Pending approval</span></td>
+                  </tr>
+                  <tr>
+                    <td><button class="text-link" type="button" data-job-detail="il">PO-IL-4001</button></td>
+                    <td>Midwest Food Logistics</td>
+                    <td>Toyota LP</td>
+                    <td>6</td>
+                    <td><span class="status blocked">Waiting info</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <aside class="detail-panel" aria-live="polite">
+              <span class="section-kicker">Job detail</span>
+              <h2 data-detail-title>PO-NC-3001</h2>
+              <dl class="details">
+                <dt>Customer</dt>
+                <dd data-detail-customer>Blue Ridge Equipment</dd>
+                <dt>Status</dt>
+                <dd data-detail-status>pending_approval</dd>
+                <dt>Recommendation</dt>
+                <dd data-detail-recommendation>Sofia Lopez, May 19 08:00-12:40</dd>
+                <dt>Materials</dt>
+                <dd data-detail-materials>Zip ties, cable protectors, insulated connectors, industrial tape</dd>
+                <dt>Notes</dt>
+                <dd data-detail-notes>Complete required information is available. Coordinator must approve before confirmation.</dd>
+              </dl>
+            </aside>
+          </div>
+        </section>
+      </section>
+
+      <section class="view" data-view="portal" data-title="Customer / Dealer Portal" data-subtitle="A tokenized portal captures missing customer, dealer, site, voltage, vehicle asset, and scheduling information." hidden tabindex="-1">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Portal Example: PO-IL-4001</h2>
+              <p>This static form mirrors the live customer/dealer portal experience.</p>
+            </div>
+            <span class="status blocked">Missing 6 fields</span>
+          </div>
+          <form class="form-grid">
+            <label>
+              On-site contact name
+              <input value="Dock Lead" readonly>
+            </label>
+            <label>
+              On-site contact phone
+              <input placeholder="+1 312 555 0999" readonly>
+            </label>
+            <label>
+              Installation address
+              <input placeholder="900 Cold Storage Dr" readonly>
+            </label>
+            <label>
+              Vehicle voltage
+              <input placeholder="12V" readonly>
+            </label>
+            <label>
+              Asset IDs
+              <input placeholder="TY-IL-001 to TY-IL-006" readonly>
+            </label>
+            <label>
+              Shipment tracking number
+              <input placeholder="1ZIL4001" readonly>
+            </label>
+            <label class="span-3">
+              Site access notes
+              <textarea rows="3" readonly>Customer must confirm exact dock address and vehicle list before the coordinator can approve the schedule.</textarea>
+            </label>
+          </form>
+        </section>
+      </section>
+
+      <section class="view" data-view="outbox" data-title="Email Outbox" data-subtitle="The MVP queues reminder and confirmation emails instead of sending through a live provider." hidden tabindex="-1">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Queued Messages</h2>
+              <p>Use the intake queue button to add another simulated follow-up reminder.</p>
+            </div>
+            <span class="status pending"><span data-count="outbox-inline">3</span> queued</span>
+          </div>
+          <div class="outbox-list" data-outbox-list>
+            <article>
+              <strong>Missing information: PO-IL-4001</strong>
+              <span>To: sam.rivera@example.com, central.sales@example.com</span>
+              <p>Missing address, contact phone, voltage, asset IDs, and shipment tracking.</p>
             </article>
-            <article class="route-card" data-route-region="ca">
-              <div>
-                <h3>Riverside advanced electric work</h3>
-                <p>1 job, 4 units, lead technician required, relay kit prepared.</p>
-              </div>
-              <strong>$0</strong>
+            <article>
+              <strong>Confirmation: PO-TX-1001</strong>
+              <span>To: tom.walker@example.com, installation-scheduling@example.com</span>
+              <p>Carlos Martinez confirmed for Dallas Toyota LP installation on May 12.</p>
             </article>
-            <article class="route-card" data-route-region="tx">
-              <div>
-                <h3>Flexible Texas support window</h3>
-                <p>Backup installer availability held for customer date changes.</p>
-              </div>
-              <strong>$372</strong>
+            <article>
+              <strong>Ready for approval: PO-NC-3001</strong>
+              <span>To: installation-scheduling@example.com</span>
+              <p>Required information is complete. Review and approve the recommended schedule.</p>
             </article>
           </div>
         </section>
       </section>
 
-      <section class="view" data-view="jobs" hidden>
+      <section class="view" data-view="integrations" data-title="Integrations" data-subtitle="The app includes example endpoints for CRM purchase order intake and production tracking updates." hidden tabindex="-1">
         <section class="panel">
           <div class="panel-head">
             <div>
-              <h2>Jobs</h2>
-              <p>Work orders keep PO, site, vehicle, production, assignment, and recommendation details together.</p>
+              <h2>Integration Events</h2>
+              <p>Hardcoded events show the expected shape of CRM and production data entering the planner.</p>
             </div>
           </div>
+          <div class="timeline">
+            <article>
+              <span>processed</span>
+              <strong>HubSpot PO received</strong>
+              <p>HS-93001 created PO-IL-4001 and queued missing info reminders.</p>
+            </article>
+            <article>
+              <span>processed</span>
+              <strong>Production tracking updated</strong>
+              <p>PO-TX-1001 received UPS tracking 1Z999TX1001 and became ready for schedule approval.</p>
+            </article>
+            <article>
+              <span>processed</span>
+              <strong>CRM deal update</strong>
+              <p>HS-92001 supplied complete customer/dealer details for Blue Ridge Equipment.</p>
+            </article>
+          </div>
+        </section>
+      </section>
+
+      <section class="view" data-view="installers" data-title="Installers" data-subtitle="Technician recommendations use home location, coverage states, skill tags, active status, and max difficulty." hidden tabindex="-1">
+        <section class="panel">
+          <div class="installer-grid">
+            <article class="person-card">
+              <h2>Carlos Martinez</h2>
+              <p>Dallas, TX</p>
+              <span class="status confirmed">Active</span>
+              <dl class="details compact">
+                <dt>Coverage</dt><dd>TX, OK, LA, AR, NM</dd>
+                <dt>Skills</dt><dd>Toyota LP, displays, warehouse fleets</dd>
+                <dt>Max difficulty</dt><dd>4 / 5</dd>
+              </dl>
+            </article>
+            <article class="person-card">
+              <h2>Priya Shah</h2>
+              <p>Riverside, CA</p>
+              <span class="status confirmed">Active</span>
+              <dl class="details compact">
+                <dt>Coverage</dt><dd>CA, NV, AZ, OR, WA</dd>
+                <dt>Skills</dt><dd>Jungheinrich, relays, diagnostics</dd>
+                <dt>Max difficulty</dt><dd>5 / 5</dd>
+              </dl>
+            </article>
+            <article class="person-card">
+              <h2>Sofia Lopez</h2>
+              <p>Atlanta, GA</p>
+              <span class="status confirmed">Active</span>
+              <dl class="details compact">
+                <dt>Coverage</dt><dd>GA, TN, NC, SC, AL, FL</dd>
+                <dt>Skills</dt><dd>Toyota LP, Hyster, displays</dd>
+                <dt>Max difficulty</dt><dd>4 / 5</dd>
+              </dl>
+            </article>
+          </div>
+        </section>
+      </section>
+
+      <section class="view" data-view="vehicles" data-title="Vehicles" data-subtitle="Vehicle rules drive estimated labor, difficulty, skill fit, materials, and risk notes." hidden tabindex="-1">
+        <section class="panel">
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>PO</th>
-                  <th>Customer</th>
-                  <th>Vehicle</th>
-                  <th>Units</th>
-                  <th>Installer</th>
-                  <th>Status</th>
+                  <th>Make / Model</th>
+                  <th>Fuel</th>
+                  <th>Difficulty</th>
+                  <th>Estimated Labor</th>
+                  <th>Technical Notes</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>PO-TX-1001</td>
-                  <td>Lone Star Distribution</td>
                   <td>Toyota LP</td>
-                  <td>10</td>
-                  <td>Carlos Martinez</td>
-                  <td><span class="status confirmed">Confirmed</span></td>
+                  <td>LP</td>
+                  <td><span class="badge complexity-1">1 / 5</span></td>
+                  <td>45 minutes per unit</td>
+                  <td>Bring longer display mounting screws and standard cable protection.</td>
                 </tr>
                 <tr>
-                  <td>PO-CA-2002</td>
-                  <td>Pacific Cold Storage</td>
-                  <td>Jungheinrich EFG</td>
-                  <td>4</td>
-                  <td>Priya Shah</td>
-                  <td><span class="status confirmed">Confirmed</span></td>
+                  <td>Jungheinrich EFG Series</td>
+                  <td>Electric</td>
+                  <td><span class="badge complexity-5">5 / 5</span></td>
+                  <td>150 minutes per unit</td>
+                  <td>Prepare relays, insulated tools, and advanced diagnostic support.</td>
                 </tr>
                 <tr>
-                  <td>PO-IL-4001</td>
-                  <td>Midwest Food Logistics</td>
-                  <td>Toyota LP</td>
-                  <td>6</td>
-                  <td>Unassigned</td>
-                  <td><span class="status blocked">Waiting info</span></td>
+                  <td>Crown FC Series</td>
+                  <td>Electric</td>
+                  <td><span class="badge complexity-3">3 / 5</span></td>
+                  <td>140 minutes per unit</td>
+                  <td>Validate power point and protect wiring near battery compartment.</td>
                 </tr>
               </tbody>
             </table>
@@ -325,53 +587,101 @@
         </section>
       </section>
 
-      <section class="view" data-view="outbox" hidden>
+      <section class="view" data-view="knowledge" data-title="Knowledge Base" data-subtitle="Rules enrich recommendations with required tools, materials, checklists, and installation risks." hidden tabindex="-1">
         <section class="panel">
-          <div class="panel-head">
-            <div>
-              <h2>Email Outbox</h2>
-              <p>Messages are queued in the MVP so real providers can be connected later.</p>
-            </div>
-            <span class="status pending"><span data-count="outbox">3</span> queued</span>
-          </div>
-          <div class="outbox-list" data-outbox-list>
-            <article>
-              <strong>Missing information: PO-IL-4001</strong>
-              <span>customer, sales rep, scheduling team</span>
+          <div class="rule-list">
+            <article class="rule-card">
+              <div class="rule-title">
+                <h2>Toyota LP - longer display mounting screws</h2>
+                <span class="status confirmed">Active</span>
+              </div>
+              <div class="chips"><span>toyota lp</span><span>display mount</span><span>standard install</span></div>
+              <p>Toyota LP is low difficulty, but many units benefit from longer screws for the display mount.</p>
             </article>
-            <article>
-              <strong>Confirmation: PO-TX-1001</strong>
-              <span>dealer and internal scheduling</span>
+            <article class="rule-card">
+              <div class="rule-title">
+                <h2>Jungheinrich electric units - prepare relays</h2>
+                <span class="status confirmed">Active</span>
+              </div>
+              <div class="chips"><span>jungheinrich</span><span>electric forklift</span><span>relays</span></div>
+              <p>Avoid sending a low-level installer alone. Missing relays can cause a failed visit.</p>
             </article>
-            <article>
-              <strong>Ready for approval: PO-NC-3001</strong>
-              <span>scheduling team</span>
+            <article class="rule-card">
+              <div class="rule-title">
+                <h2>LP vehicles - safety and ignition source check</h2>
+                <span class="status confirmed">Active</span>
+              </div>
+              <div class="chips"><span>lp</span><span>propane</span><span>heat protection</span></div>
+              <p>Route wiring away from hot surfaces and validate a safe power source before mounting.</p>
             </article>
           </div>
         </section>
       </section>
 
-      <section class="view" data-view="api" hidden>
+      <section class="view" data-view="bot" data-title="Technical Bot" data-subtitle="The technical bot answers field questions from the knowledge base rules." hidden tabindex="-1">
         <section class="panel">
-          <div class="panel-head">
-            <div>
-              <h2>API Preview</h2>
-              <p>The live FastAPI app exposes intake, schedule, production tracking, readiness, and planning endpoints.</p>
+          <div class="bot-shell">
+            <div class="bot-question">
+              <span>Coordinator question</span>
+              <strong>What should I bring for Toyota LP?</strong>
+            </div>
+            <div class="bot-answer">
+              <span>Knowledge-based answer</span>
+              <p>Toyota LP is difficulty 1/5 and usually takes 30-60 minutes per unit. Bring longer display mounting screws, zip ties, cable protectors, spare connectors, a drill, Phillips bits, metric sockets, a multimeter, and a trim tool.</p>
+            </div>
+            <div class="bot-question">
+              <span>Field question</span>
+              <strong>Can Mia handle Jungheinrich EFG alone?</strong>
+            </div>
+            <div class="bot-answer warning">
+              <span>Knowledge-based answer</span>
+              <p>No. Jungheinrich EFG is difficulty 5/5 and requires relay preparation plus advanced diagnostics. Assign Priya Shah or another lead-level installer.</p>
             </div>
           </div>
+        </section>
+      </section>
+
+      <section class="view" data-view="api" data-title="API Preview" data-subtitle="The live FastAPI app exposes intake, schedule, production tracking, readiness, planning, and knowledge endpoints." hidden tabindex="-1">
+        <section class="panel">
           <div class="code-grid">
             <pre><code>POST /api/crm/hubspot/po
 {
   "source_system": "HubSpot",
-  "po_number": "PO-12345",
-  "customer_name": "Example Fleet",
-  "installation_required": true
+  "hubspot_deal_id": "HS-93001",
+  "po_number": "PO-IL-4001",
+  "customer_name": "Midwest Food Logistics",
+  "installation_required": true,
+  "requested_date": "2026-05-22",
+  "vehicle_make": "Toyota",
+  "vehicle_model": "LP",
+  "quantity": 6
 }</code></pre>
-            <pre><code>GET /api/jobs/{job_id}/schedule-options
-
-POST /api/production/tracking
-
-GET /api/jobs/{job_id}/readiness</code></pre>
+            <pre><code>GET /api/jobs/6/schedule-options
+{
+  "best_option": {
+    "installer": "Mike Johnson",
+    "date": "2026-05-22",
+    "time": "08:00-13:10",
+    "score": 84
+  }
+}</code></pre>
+            <pre><code>POST /api/production/tracking
+{
+  "po_number": "PO-IL-4001",
+  "shipment_carrier": "UPS",
+  "shipment_tracking_number": "1ZIL4001",
+  "order_ready": true
+}</code></pre>
+            <pre><code>GET /api/jobs/6/readiness
+{
+  "is_complete": false,
+  "completion_percent": 62,
+  "missing_labels": [
+    "Installation address",
+    "Vehicle voltage",
+    "Shipment tracking number"
+  ]
+}</code></pre>
           </div>
         </section>
       </section>
@@ -381,4 +691,3 @@ GET /api/jobs/{job_id}/readiness</code></pre>
   <script src="assets/app.js"></script>
 </body>
 </html>
-

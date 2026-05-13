@@ -43,6 +43,8 @@ The static demo entry point is:
 docs/index.html
 ```
 
+The GitHub Pages demo is a static, navigable version of the original MVP. It includes hardcoded examples for the dashboard, intake queue, confirmed calendar, route planner, jobs, customer/dealer portal, email outbox, integrations, installers, vehicles, knowledge base, technical bot, and API preview.
+
 Initial repository commands:
 
 ```bash
