@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}Route Planner{% endblock %}
+{% block page_title %}Intelligent Route Planner{% endblock %}
+{% block page_subtitle %}Group nearby jobs, reduce duplicate travel, select the right technician team, and organize customer installation campaigns.{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h2>Planning Filters</h2>
+  <form method="get" action="/planning" class="form-grid wide">
+    <label>Start Date<input name="start_date" type="date" value="{{ start_date }}"></label>
+    <label>End Date<input name="end_date" type="date" value="{{ end_date }}"></label>
+    <label>State<input name="state" maxlength="2" placeholder="TX" value="{{ state }}"></label>
+    <label>Customer<input name="customer" placeholder="Customer name" value="{{ customer }}"></label>
+    <label>Nearby Radius Miles<input name="max_radius_miles" type="number" min="25" max="600" step="25" value="{{ max_radius_miles }}"></label>
+    <label>Max Days Apart<input name="max_days_apart" type="number" min="0" max="30" value="{{ max_days_apart }}"></label>
+    <button class="button primary" type="submit">Optimize Plan</button>
+  </form>
+</section>
+
+<section class="cards grid-5">
+  <article class="card metric"><span>Open Jobs Analyzed</span><strong>{{ plan.summary.job_count }}</strong></article>
+  <article class="card metric"><span>Total Units</span><strong>{{ plan.summary.total_units }}</strong></article>
+  <article class="card metric"><span>Route Groups</span><strong>{{ plan.summary.group_count }}</strong></article>
+  <article class="card metric"><span>Consolidated Groups</span><strong>{{ plan.summary.consolidated_groups }}</strong></article>
+  <article class="card metric"><span>Projected Savings</span><strong>${{ '%.0f'|format(plan.summary.projected_total_savings) }}</strong></article>
+</section>
+
+<section class="card muted-card">
+  <h2>Decision Model</h2>
+  <div class="flow">
+    <div><strong>1</strong><span>Detect jobs that are geographically close and inside the planning window.</span></div>
+    <div><strong>2</strong><span>Calculate total units, labor minutes, route miles, duplicate travel, and likely flight consolidation.</span></div>
+    <div><strong>3</strong><span>Rank installers by coverage, skill tags, max difficulty, workload, and distance.</span></div>
+    <div><strong>4</strong><span>Suggest a deployment team and route sequence for the coordinator to approve.</span></div>
+  </div>
+</section>
+
+<section class="card">
+  <div class="section-head">
+    <h2>Customer Campaigns</h2>
+    <span>Useful when one customer has many installations across one or more regions.</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Customer</th><th>Jobs</th><th>Units</th><th>Hours</th><th>States</th><th>Max Difficulty</th><th>Planning Note</th></tr></thead>
+      <tbody>
+      {% for campaign in plan.customer_campaigns %}
+        <tr>
+          <td><strong>{{ campaign.customer_name }}</strong></td>
+          <td>{{ campaign.job_count }}</td>
+          <td>{{ campaign.total_units }}</td>
+          <td>{{ campaign.total_hours }}</td>
+          <td>{{ campaign.states|join(', ') }}</td>
+          <td><span class="badge complexity-{{ campaign.max_difficulty }}">{{ campaign.max_difficulty }}/5</span></td>
+          <td>{{ campaign.planning_note }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="7" class="empty">No customer campaigns found in this planning window.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card">
+  <div class="section-head">
+    <h2>Optimized Route Groups</h2>
+    <span>Approximate routing for planning. Use live map integration before production dispatch.</span>
+  </div>
+  <div class="route-groups">
+    {% for group in plan.groups %}
+      <article class="route-card {% if group.job_count > 1 %}consolidated{% endif %}">
+        <div class="route-head">
+          <div>
+            <h3>Group {{ group.group_id }}: {{ group.name }}</h3>
+            <p>{{ group.date_range }} | {{ group.job_count }} job(s) | {{ group.total_units }} unit(s) | max difficulty {{ group.max_difficulty }}/5</p>
+          </div>
+          <div class="route-savings">
+            <strong>${{ '%.0f'|format(group.projected_total_savings) }}</strong>
+            <span>projected savings</span>
+          </div>
+        </div>
+
+        <div class="route-metrics">
+          <span><strong>{{ group.optimized_route_miles }}</strong> optimized miles</span>
+          <span><strong>{{ group.miles_saved }}</strong> duplicate miles avoided</span>
+          <span><strong>{{ group.days_required }}</strong> suggested day(s)</span>
+          <span><strong>{{ group.recommended_team_size }}</strong> technician(s)</span>
+          {% if group.likely_flight_required %}<span class="warn-chip">Likely flight deployment</span>{% endif %}
+        </div>
+
+        <section class="route-section">
+          <h4>Recommended Team</h4>
+          <div class="team-list">
+            {% for installer in group.recommended_team %}
+              <span>{{ installer.name }} - {{ installer.home_city }}, {{ installer.home_state }} - max {{ installer.max_complexity }}/5</span>
+            {% else %}
+              <span>No active installer available.</span>
+            {% endfor %}
+          </div>
+        </section>
+
+        <section class="route-section">
+          <h4>Suggested Route Sequence</h4>
+          <ol class="route-steps">
+            {% for job in group.route_order %}
+              <li>
+                <a href="/jobs/{{ job.id }}"><strong>{{ job.customer_name }}</strong></a>
+                <span>{{ job.site_city }}, {{ job.site_state }} - {{ job.vehicle_make }} {{ job.vehicle_model }} {{ job.fuel_type }} - {{ job.quantity }} unit(s) - difficulty {{ job.complexity }}/5</span>
+              </li>
+            {% endfor %}
+          </ol>
+        </section>
+
+        <section class="route-section two-col inner-two-col">
+          <div>
+            <h4>Why This Group Helps</h4>
+            <ul>
+              {% for reason in group.reasons %}<li>{{ reason }}</li>{% endfor %}
+            </ul>
+          </div>
+          <div>
+            <h4>Coordinator Warnings</h4>
+            <ul>
+              {% for warning in group.warnings %}<li class="warn">{{ warning }}</li>{% else %}<li>No major warnings.</li>{% endfor %}
+            </ul>
+          </div>
+        </section>
+
+        <details class="route-details">
+          <summary>Top Installer Scores</summary>
+          {% for score in group.ranked_installers %}
+            <div class="score-line">
+              <strong>{{ loop.index }}. {{ score.installer.name }} - {{ score.score }}</strong>
+              <span>{{ score.reasons|join(' ') }} {{ score.warnings|join(' ') }}</span>
+            </div>
+          {% endfor %}
+        </details>
+      </article>
+    {% else %}
+      <p class="empty">No jobs found in this planning window.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

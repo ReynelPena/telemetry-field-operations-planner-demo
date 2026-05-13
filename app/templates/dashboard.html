@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - Field Operations Planner{% endblock %}
+{% block page_title %}Operations Dashboard{% endblock %}
+{% block page_subtitle %}Confirmed calendar, jobs waiting for required information, pending coordinator approvals, route opportunities, and queued reminders.{% endblock %}
+
+{% block content %}
+<section class="cards grid-5">
+  <article class="card metric"><span>Confirmed Jobs</span><strong>{{ counts.confirmed_jobs }}</strong></article>
+  <article class="card metric danger"><span>Waiting Required Info</span><strong>{{ counts.waiting_required_info }}</strong></article>
+  <article class="card metric"><span>Pending Approval</span><strong>{{ counts.pending_approval }}</strong></article>
+  <article class="card metric"><span>Route Opportunities</span><strong>{{ counts.route_groups }}</strong></article>
+  <article class="card metric"><span>Queued Emails</span><strong>{{ counts.queued_notifications }}</strong></article>
+</section>
+
+<section class="two-col">
+  <article class="card">
+    <div class="section-head">
+      <h2>Confirmed Calendar Preview</h2>
+      <a href="/calendar">Open calendar</a>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>PO</th><th>Customer</th><th>Location</th><th>Installer</th><th>Difficulty</th></tr></thead>
+        <tbody>
+        {% for job in confirmed_jobs %}
+          <tr>
+            <td>{{ job.requested_date }}</td>
+            <td><a href="/jobs/{{ job.id }}">{{ job.po_number or ('Job #' ~ job.id) }}</a></td>
+            <td>{{ job.customer_name }}<br><small>{{ job.quantity }} {{ job.vehicle_make }} {{ job.vehicle_model }}</small></td>
+            <td>{{ job.site_city }}, {{ job.site_state }}</td>
+            <td>{{ job.installer_name or 'Unassigned' }}</td>
+            <td><span class="badge complexity-{{ job.complexity }}">{{ job.complexity }}/5</span></td>
+          </tr>
+        {% else %}
+          <tr><td colspan="6" class="empty">No confirmed jobs yet.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </article>
+
+  <article class="card">
+    <div class="section-head">
+      <h2>Jobs to Confirm</h2>
+      <a href="/intake">Open intake queue</a>
+    </div>
+    {% for job in pending_jobs %}
+      <div class="alert-item {% if job.status == 'waiting_required_info' %}danger-soft{% endif %}">
+        <strong><a href="/jobs/{{ job.id }}">{{ job.po_number or ('Job #' ~ job.id) }}</a> - {{ job.customer_name }}</strong>
+        <span>{{ job.status|replace('_', ' ')|title }} | {{ job.info_completion_percent }}% info complete | suggested: {{ job.suggested_installer_name or 'not ready' }} | date: {{ job.suggested_scheduled_start or 'not ready' }}</span>
+        <div class="progress"><i style="width: {{ job.info_completion_percent }}%"></i></div>
+      </div>
+    {% else %}
+      <p class="empty">No pending jobs.</p>
+    {% endfor %}
+  </article>
+</section>
+
+<section class="two-col">
+  <article class="card">
+    <div class="section-head">
+      <h2>Route Planning Preview</h2>
+      <a href="/planning">Open route planner</a>
+    </div>
+    {% for group in planning_preview.groups[:3] %}
+      <div class="alert-item">
+        <strong>Group {{ group.group_id }}: {{ group.state }} - {{ group.job_count }} job(s)</strong>
+        <span>{{ group.total_units }} unit(s) | {{ group.date_range }} | {{ group.miles_saved }} duplicate miles avoided</span>
+        <p>{{ group.reasons[0] if group.reasons else 'Review this route group for consolidation.' }}</p>
+      </div>
+    {% else %}
+      <p class="empty">No route opportunities in the planning window.</p>
+    {% endfor %}
+  </article>
+
+  <article class="card">
+    <div class="section-head">
+      <h2>Queued Customer / Internal Emails</h2>
+      <a href="/notifications">Open outbox</a>
+    </div>
+    {% for item in notifications %}
+      <div class="alert-item">
+        <strong>{{ item.recipient_type|replace('_', ' ')|title }} - {{ item.recipient_email }}</strong>
+        <span>{{ item.po_number or ('Job #' ~ item.job_id) }} | {{ item.created_at }}</span>
+        <p>{{ item.subject }}</p>
+      </div>
+    {% else %}
+      <p class="empty">No queued reminders.</p>
+    {% endfor %}
+  </article>
+</section>
+
+<section class="card muted-card">
+  <h2>Operational Gate</h2>
+  <div class="flow">
+    <div><strong>1</strong><span>PO is received from CRM or entered manually.</span></div>
+    <div><strong>2</strong><span>Required customer/dealer, site, voltage, vehicle, and tracking information is validated.</span></div>
+    <div><strong>3</strong><span>AI suggests the best technician, route group, materials, and schedule.</span></div>
+    <div><strong>4</strong><span>Coordinator approves before the job appears on the confirmed calendar.</span></div>
+  </div>
+</section>
+{% endblock %}

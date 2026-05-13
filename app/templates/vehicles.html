@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Vehicles{% endblock %}
+{% block page_title %}Vehicle Knowledge Profiles{% endblock %}
+{% block page_subtitle %}Define difficulty, estimated time, technical notes, and required skills by vehicle model.{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h2>Add Vehicle / Model</h2>
+  <form method="post" action="/vehicles" class="form-grid">
+    <label>Make<input name="make" required placeholder="Toyota"></label>
+    <label>Model<input name="model" required placeholder="LP"></label>
+    <label>Fuel Type<input name="fuel_type" placeholder="LP, Diesel, Electric"></label>
+    <label>Difficulty
+      <select name="complexity">
+        <option value="1">1 - Basic</option>
+        <option value="2">2</option>
+        <option value="3" selected>3 - Intermediate</option>
+        <option value="4">4 - Advanced</option>
+        <option value="5">5 - Expert</option>
+      </select>
+    </label>
+    <label>Estimated Minutes<input name="estimated_minutes" type="number" value="120" min="30" step="15"></label>
+    <label class="span-2">Technical Tags<input name="skill_tags" placeholder="toyota lp, propane, display mounts"></label>
+    <label class="span-3">Notes<textarea name="notes" rows="3" placeholder="General technical notes for this vehicle"></textarea></label>
+    <button class="button primary" type="submit">Save Vehicle</button>
+  </form>
+</section>
+
+<section class="card">
+  <div class="section-head"><h2>Registered Models</h2><span>{{ vehicles|length }} records</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Vehicle</th><th>Fuel</th><th>Difficulty</th><th>Time</th><th>Tags</th><th>Notes</th></tr></thead>
+      <tbody>
+      {% for vehicle in vehicles %}
+        <tr>
+          <td><strong>{{ vehicle.make }} {{ vehicle.model }}</strong></td>
+          <td>{{ vehicle.fuel_type }}</td>
+          <td><span class="badge complexity-{{ vehicle.complexity }}">{{ vehicle.complexity }}/5</span></td>
+          <td>{{ vehicle.estimated_minutes }} min</td>
+          <td>{{ vehicle.skill_tags }}</td>
+          <td>{{ vehicle.notes }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="6" class="empty">No vehicles yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

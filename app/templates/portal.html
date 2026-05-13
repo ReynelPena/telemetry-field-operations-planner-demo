@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Installation Information Portal</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="portal-body">
+  <main class="portal-shell">
+    <section class="card portal-hero">
+      <h1>Installation Information Portal</h1>
+      <p>This secure link is used to complete information required before technician scheduling can be confirmed.</p>
+      <div class="chips"><span>{{ job.po_number or ('Job #' ~ job.id) }}</span><span>{{ job.customer_name }}</span><span class="status {{ job.status }}">{{ job.status|replace('_', ' ')|title }}</span></div>
+    </section>
+
+    <section class="card readiness-card {% if not readiness.is_complete %}blocked{% endif %}">
+      <div class="section-head"><h2>Scheduling Readiness</h2><strong>{{ readiness.completion_percent }}%</strong></div>
+      <div class="progress large"><i style="width: {{ readiness.completion_percent }}%"></i></div>
+      {% if readiness.missing_fields %}
+        <p class="danger-text">The job cannot be confirmed until these fields are completed:</p>
+        <ul class="missing-list">
+          {% for field in readiness.missing_fields %}<li><strong>{{ field.label }}</strong><span>{{ field.owner|title }}</span></li>{% endfor %}
+        </ul>
+      {% else %}
+        <p class="success-text">Required information is complete. The internal coordinator can now review and approve scheduling.</p>
+      {% endif %}
+    </section>
+
+    <form method="post" action="/portal/{{ job.portal_token }}">
+      <section class="card">
+        <h2>Customer / Dealer Contact</h2>
+        <div class="form-grid wide">
+          <label>Customer Contact Name<input name="customer_contact_name" value="{{ job.customer_contact_name }}"></label>
+          <label>Customer Contact Email<input name="customer_contact_email" type="email" value="{{ job.customer_contact_email }}"></label>
+          <label>Customer Contact Phone<input name="customer_contact_phone" value="{{ job.customer_contact_phone }}"></label>
+          <label>Date Preference
+            <select name="requested_date_type">
+              <option value="exact" {% if job.requested_date_type == 'exact' %}selected{% endif %}>Exact preferred date</option>
+              <option value="range" {% if job.requested_date_type == 'range' %}selected{% endif %}>Date range / scheduling window</option>
+              <option value="flexible" {% if job.requested_date_type == 'flexible' %}selected{% endif %}>Flexible after start date</option>
+            </select>
+          </label>
+          <label>Requested Date / Window Start<input name="requested_date" type="date" value="{{ job.requested_date }}"></label>
+          <label>Window End Date<input name="requested_end_date" type="date" value="{{ job.requested_end_date }}"></label>
+          <label class="span-2">Date Flexibility Notes<input name="date_flexibility_notes" value="{{ job.date_flexibility_notes }}" placeholder="Example: Tue-Thu mornings preferred"></label>
+          <label>Dealer Name<input name="dealer_name" value="{{ job.dealer_name }}"></label>
+          <label>Dealer Contact Name<input name="dealer_contact_name" value="{{ job.dealer_contact_name }}"></label>
+          <label>Dealer Contact Email<input name="dealer_contact_email" type="email" value="{{ job.dealer_contact_email }}"></label>
+          <label>Dealer Contact Phone<input name="dealer_contact_phone" value="{{ job.dealer_contact_phone }}"></label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Installation Site</h2>
+        <div class="form-grid wide">
+          <label class="span-2">Full Installation Address<input name="site_address" value="{{ job.site_address }}" placeholder="Required"></label>
+          <label>City<input name="site_city" value="{{ job.site_city }}" placeholder="Required"></label>
+          <label>State<input name="site_state" maxlength="2" value="{{ job.site_state }}" placeholder="TX"></label>
+          <label>ZIP<input name="site_zip" value="{{ job.site_zip }}" placeholder="Required"></label>
+          <label>On-Site Contact Name<input name="site_contact_name" value="{{ job.site_contact_name }}" placeholder="Required"></label>
+          <label>On-Site Contact Email<input name="site_contact_email" type="email" value="{{ job.site_contact_email }}"></label>
+          <label>On-Site Contact Phone<input name="site_contact_phone" value="{{ job.site_contact_phone }}" placeholder="Required"></label>
+          <label class="span-2">Site Access Hours<input name="site_access_hours" value="{{ job.site_access_hours }}" placeholder="Example: Mon-Fri 8 AM - 4 PM"></label>
+          <label class="span-2">Site Access Notes<input name="site_access_notes" value="{{ job.site_access_notes }}" placeholder="Gate code, PPE, check-in location, restrictions"></label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Vehicle Information</h2>
+        <div class="form-grid wide">
+          <label>Make<input name="vehicle_make" value="{{ job.vehicle_make }}" placeholder="Toyota"></label>
+          <label>Model<input name="vehicle_model" value="{{ job.vehicle_model }}" placeholder="LP"></label>
+          <label>Fuel / Power Type<input name="fuel_type" value="{{ job.fuel_type }}" placeholder="LP, Electric, Diesel"></label>
+          <label>Vehicle Voltage<input name="vehicle_voltage" value="{{ job.vehicle_voltage }}" placeholder="12V, 24V, 36V, 48V"></label>
+          <label>Vehicle Year<input name="vehicle_year" value="{{ job.vehicle_year }}"></label>
+          <label>Quantity<input name="quantity" type="number" min="1" value="{{ job.quantity }}"></label>
+          <label class="span-4">Vehicle Serial Numbers / Asset IDs<textarea name="vehicle_asset_ids" rows="4" placeholder="Required: one per line or comma separated">{{ job.vehicle_asset_ids }}</textarea></label>
+          <label class="span-4">Additional Notes<textarea name="notes" rows="3">{{ job.notes }}</textarea></label>
+        </div>
+        <div class="form-actions"><button class="button primary" type="submit">Submit Required Information</button></div>
+      </section>
+    </form>
+  </main>
+</body>
+</html>

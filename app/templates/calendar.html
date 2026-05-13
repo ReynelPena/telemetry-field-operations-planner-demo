@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Scheduler{% endblock %}
+{% block page_title %}National Installer Scheduler{% endblock %}
+{% block page_subtitle %}Monthly view of confirmed jobs only. Pending jobs remain in Intake Queue until required information and coordinator approval are complete.{% endblock %}
+
+{% block content %}
+<section class="card">
+  <div class="calendar-head">
+    <a class="button" href="/calendar?month={{ prev_month }}">← Previous Month</a>
+    <h2>{{ month_label }}</h2>
+    <a class="button" href="/calendar?month={{ next_month }}">Next Month →</a>
+  </div>
+  <div class="calendar-grid">
+    {% for name in ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'] %}
+      <div class="calendar-day-name">{{ name }}</div>
+    {% endfor %}
+    {% for week in weeks %}
+      {% for day in week %}
+        <div class="calendar-cell {% if not day.in_month %}outside{% endif %}">
+          <div class="date-num">{{ day.date.day }}</div>
+          {% for job in day.jobs %}
+            <a class="calendar-job complexity-border-{{ job.complexity }}" href="/jobs/{{ job.id }}">
+              <strong>{{ job.customer_name }}</strong>
+              <span>{{ job.site_state }} | {{ job.vehicle_make }} {{ job.vehicle_model }}</span>
+              <small>{{ job.installer_name or 'Unassigned' }}</small>
+            </a>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

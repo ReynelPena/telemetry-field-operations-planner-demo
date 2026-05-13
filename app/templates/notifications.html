@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Email Outbox{% endblock %}
+{% block page_title %}Email Notification Outbox{% endblock %}
+{% block page_subtitle %}MVP email queue for missing information reminders, internal alerts, installer notices, and confirmation emails.{% endblock %}
+
+{% block content %}
+<section class="card muted-card">
+  <h2>MVP Email Behavior</h2>
+  <p class="subtle">This version queues email records in the application so you can validate the workflow. In production, this outbox can be connected to SendGrid, Microsoft 365, Gmail, HubSpot, or another transactional email provider.</p>
+</section>
+
+<section class="card">
+  <div class="section-head"><h2>Notifications</h2><span>{{ notifications|length }} shown</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Created</th><th>Job</th><th>Recipient</th><th>Subject</th><th>Body</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>
+      {% for item in notifications %}
+        <tr>
+          <td>{{ item.created_at }}</td>
+          <td><a href="/jobs/{{ item.job_id }}">{{ item.po_number or ('Job #' ~ item.job_id) }}</a><br><small>{{ item.customer_name or '' }}</small></td>
+          <td>{{ item.recipient_type|replace('_', ' ')|title }}<br><small>{{ item.recipient_email }}</small></td>
+          <td>{{ item.subject }}</td>
+          <td><pre class="outbox-body">{{ item.body }}</pre></td>
+          <td><span class="status {{ item.status }}">{{ item.status|title }}</span></td>
+          <td>{% if item.status == 'queued' %}<form method="post" action="/notifications/{{ item.id }}/sent"><button class="button" type="submit">Mark Sent</button></form>{% endif %}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="7" class="empty">No notifications yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

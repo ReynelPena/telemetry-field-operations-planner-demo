@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Technical Bot{% endblock %}
+{% block page_title %}Trainable Technical Bot{% endblock %}
+{% block page_subtitle %}Ask about vehicle models, materials, tools, checklists, and field risks. The bot uses the local knowledge base.{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h2>Ask the Bot</h2>
+  <form method="get" action="/bot" class="bot-form">
+    <input name="question" value="{{ question }}" placeholder="Example: What should I bring for Toyota LP?" required>
+    <button class="button primary" type="submit">Ask</button>
+  </form>
+</section>
+
+{% if result %}
+<section class="card bot-answer">
+  <h2>Answer</h2>
+  <p class="preline">{{ result.answer }}</p>
+</section>
+
+<section class="two-col">
+  <article class="card">
+    <h2>Matched Rules</h2>
+    {% for rule in result.rules %}
+      <div class="rule-inline">
+        <strong>{{ rule.title }}</strong>
+        <span>{{ rule.matched_terms or 'general match' }}</span>
+      </div>
+    {% else %}
+      <p class="empty">No exact rules found.</p>
+    {% endfor %}
+  </article>
+  <article class="card">
+    <h2>Matched Vehicles</h2>
+    {% for vehicle in result.vehicles %}
+      <div class="rule-inline">
+        <strong>{{ vehicle.make }} {{ vehicle.model }}</strong>
+        <span>{{ vehicle.fuel_type }} | difficulty {{ vehicle.complexity }}/5</span>
+      </div>
+    {% else %}
+      <p class="empty">No exact vehicles found.</p>
+    {% endfor %}
+  </article>
+</section>
+{% endif %}
+
+<section class="card muted-card">
+  <h2>How to Train It</h2>
+  <p>Add rules in the <a href="/knowledge">Knowledge Base</a>. Use triggers such as make, model, fuel type, common installer language, tools, and materials. Every new rule is considered when jobs are created and when the bot answers questions.</p>
+</section>
+{% endblock %}

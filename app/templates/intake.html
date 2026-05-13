@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Intake Queue{% endblock %}
+{% block page_title %}Intake and Approval Queue{% endblock %}
+{% block page_subtitle %}Jobs stay here until mandatory information is complete and the coordinator approves the AI scheduling recommendation.{% endblock %}
+
+{% block content %}
+<section class="card">
+  <div class="section-head"><h2>Jobs Waiting for Confirmation</h2><span>{{ jobs|length }} record(s)</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>PO</th><th>Customer</th><th>Status</th><th>Info Readiness</th><th>Location</th><th>Vehicle</th><th>AI Schedule</th><th>Action</th></tr></thead>
+      <tbody>
+      {% for job in jobs %}
+        <tr>
+          <td><a href="/jobs/{{ job.id }}"><strong>{{ job.po_number or ('Job #' ~ job.id) }}</strong></a><br><small>{{ job.hubspot_deal_id }}</small></td>
+          <td>{{ job.customer_name }}<br><small>{{ job.customer_type }}</small></td>
+          <td><span class="status {{ job.status }}">{{ job.status|replace('_', ' ')|title }}</span></td>
+          <td>
+            <div class="progress"><i style="width: {{ job.info_completion_percent }}%"></i></div>
+            <small>{{ job.info_completion_percent }}% complete</small>
+          </td>
+          <td>{{ job.site_city or '-' }}, {{ job.site_state or '-' }}<br><small>{{ job.site_address or 'Missing address' }}</small></td>
+          <td>{{ job.quantity }} x {{ job.vehicle_make or '-' }} {{ job.vehicle_model or '' }}<br><small>Voltage: {{ job.vehicle_voltage or 'Missing' }}</small></td>
+          <td>{{ job.suggested_scheduled_start or 'Not ready' }}<br><small>{{ job.suggested_installer_name or 'No tech suggestion' }}</small></td>
+          <td class="actions"><a class="button" href="/jobs/{{ job.id }}">Review</a></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="8" class="empty">No jobs waiting for confirmation.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card muted-card">
+  <h2>Mandatory Information Gate</h2>
+  <p class="subtle">A job cannot be confirmed or placed on the technician calendar until the following required fields are complete.</p>
+  <div class="chips">
+    {% for field in required_fields %}<span>{{ field.label }}</span>{% endfor %}
+  </div>
+</section>
+{% endblock %}

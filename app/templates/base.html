@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Telemetry Field Operations Planner{% endblock %}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">FO</div>
+      <div>
+        <strong>Field Operations Planner</strong>
+        <span>Industrial telematics</span>
+      </div>
+    </div>
+    <nav>
+      <a href="/" class="{% if request.url.path == '/' %}active{% endif %}">Dashboard</a>
+      <a href="/intake" class="{% if request.url.path.startswith('/intake') %}active{% endif %}">Intake Queue</a>
+      <a href="/calendar" class="{% if request.url.path.startswith('/calendar') %}active{% endif %}">Confirmed Calendar</a>
+      <a href="/planning" class="{% if request.url.path.startswith('/planning') %}active{% endif %}">Route Planner</a>
+      <a href="/jobs" class="{% if request.url.path.startswith('/jobs') %}active{% endif %}">Jobs</a>
+      <a href="/notifications" class="{% if request.url.path.startswith('/notifications') %}active{% endif %}">Email Outbox</a>
+      <a href="/integrations" class="{% if request.url.path.startswith('/integrations') %}active{% endif %}">Integrations</a>
+      <a href="/installers" class="{% if request.url.path.startswith('/installers') %}active{% endif %}">Installers</a>
+      <a href="/vehicles" class="{% if request.url.path.startswith('/vehicles') %}active{% endif %}">Vehicles</a>
+      <a href="/knowledge" class="{% if request.url.path.startswith('/knowledge') %}active{% endif %}">Knowledge Base</a>
+      <a href="/bot" class="{% if request.url.path.startswith('/bot') %}active{% endif %}">Technical Bot</a>
+    </nav>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <div>
+        <h1>{% block page_title %}Smart Field Operations Planning System{% endblock %}</h1>
+        <p>{% block page_subtitle %}PO intake, required information control, AI recommendations, approval, scheduling, routing, and customer/dealer reminders.{% endblock %}</p>
+      </div>
+      <a class="button primary" href="/jobs/new">+ New PO / Job</a>
+    </header>
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

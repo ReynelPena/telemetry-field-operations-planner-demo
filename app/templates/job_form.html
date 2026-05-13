@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}New PO / Job{% endblock %}
+{% block page_title %}Create PO / Installation Job{% endblock %}
+{% block page_subtitle %}Create the work order from a PO, CRM deal, or manual request. The system will not confirm scheduling until mandatory information is complete.{% endblock %}
+
+{% block content %}
+<form method="post" action="/jobs/new">
+  <section class="card">
+    <h2>PO and Customer / Dealer Information</h2>
+    <div class="form-grid wide">
+      <label>PO Number<input name="po_number" placeholder="PO-12345"></label>
+      <label>HubSpot Deal ID<input name="hubspot_deal_id" placeholder="Optional CRM deal ID"></label>
+      <label>Customer Type
+        <select name="customer_type"><option>Customer</option><option>Dealer</option><option>Distributor</option></select>
+      </label>
+      <label>Date Preference
+        <select name="requested_date_type">
+          <option value="exact">Exact preferred date</option>
+          <option value="range">Date range / scheduling window</option>
+          <option value="flexible">Flexible after start date</option>
+        </select>
+      </label>
+      <label>Requested Date / Window Start<input name="requested_date" type="date" required value="{{ today }}"></label>
+      <label>Window End Date<input name="requested_end_date" type="date"></label>
+      <label class="span-2">Date Flexibility Notes<input name="date_flexibility_notes" placeholder="Example: customer prefers Tue-Thu mornings; avoid Mondays; site open 8 AM-3 PM"></label>
+      <label class="span-2">Customer Name<input name="customer_name" required placeholder="Customer / fleet name"></label>
+      <label>Customer Contact Name<input name="customer_contact_name" placeholder="Name"></label>
+      <label>Customer Contact Email<input name="customer_contact_email" type="email" placeholder="email@example.com"></label>
+      <label>Customer Contact Phone<input name="customer_contact_phone" placeholder="+1"></label>
+      <label>Dealer Name<input name="dealer_name" placeholder="Dealer / distributor"></label>
+      <label>Dealer Contact Name<input name="dealer_contact_name" placeholder="Name"></label>
+      <label>Dealer Contact Email<input name="dealer_contact_email" type="email" placeholder="email@example.com"></label>
+      <label>Dealer Contact Phone<input name="dealer_contact_phone" placeholder="+1"></label>
+      <label>Sales Rep Name<input name="sales_rep_name" placeholder="Internal owner"></label>
+      <label>Sales Rep Email<input name="sales_rep_email" type="email" placeholder="sales@example.com"></label>
+      <label class="check"><input type="checkbox" name="installation_required" value="yes" checked> Installation required by our team</label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Site Information Required Before Scheduling</h2>
+    <div class="form-grid wide">
+      <label class="span-2">Installation Address<input name="site_address" placeholder="Full address"></label>
+      <label>City<input name="site_city" placeholder="Dallas"></label>
+      <label>State<input name="site_state" maxlength="2" placeholder="TX"></label>
+      <label>ZIP<input name="site_zip" placeholder="75201"></label>
+      <label>On-Site Contact Name<input name="site_contact_name" placeholder="Required"></label>
+      <label>On-Site Contact Email<input name="site_contact_email" type="email" placeholder="Optional"></label>
+      <label>On-Site Contact Phone<input name="site_contact_phone" placeholder="Required"></label>
+      <label class="span-2">Site Access Hours<input name="site_access_hours" placeholder="Mon-Fri 8:00 AM - 4:00 PM"></label>
+      <label class="span-2">Site Access Notes<input name="site_access_notes" placeholder="Gate code, PPE, loading dock, access restrictions"></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Vehicle and Installation Details</h2>
+    <div class="form-grid wide">
+      <label class="span-2">Use Registered Vehicle
+        <select id="vehiclePicker">
+          <option value="">Select a vehicle to auto-fill</option>
+          {% for vehicle in vehicles %}
+            <option value="{{ vehicle.id }}" data-make="{{ vehicle.make }}" data-model="{{ vehicle.model }}" data-fuel="{{ vehicle.fuel_type }}">
+              {{ vehicle.make }} {{ vehicle.model }} - {{ vehicle.fuel_type }} - difficulty {{ vehicle.complexity }}/5
+            </option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Make<input id="vehicleMake" name="vehicle_make" placeholder="Toyota"></label>
+      <label>Model<input id="vehicleModel" name="vehicle_model" placeholder="LP"></label>
+      <label>Fuel / Power Type<input id="fuelType" name="fuel_type" placeholder="LP, Diesel, Electric"></label>
+      <label>Vehicle Voltage<input name="vehicle_voltage" placeholder="12V, 24V, 36V, 48V"></label>
+      <label>Quantity<input name="quantity" type="number" value="1" min="1"></label>
+      <label>Vehicle Year<input name="vehicle_year" placeholder="Optional"></label>
+      <label class="span-3">Vehicle Serial Numbers / Asset IDs<textarea name="vehicle_asset_ids" rows="3" placeholder="Required: list units, asset IDs, serial numbers, or fleet IDs"></textarea></label>
+      <label class="span-2">Installation Type<input name="installation_type" value="Telematics + Display"></label>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Production / Shipment Readiness</h2>
+    <div class="form-grid wide">
+      <label>Carrier<input name="shipment_carrier" placeholder="UPS, FedEx, etc."></label>
+      <label>Tracking Number<input name="shipment_tracking_number" placeholder="Required before confirmation"></label>
+      <label class="check"><input type="checkbox" name="order_ready" value="yes"> Production order ready / shipped</label>
+      <label class="check"><input type="checkbox" name="send_initial_reminder" value="yes" checked> Queue reminders if information is missing</label>
+      <label class="span-4">Internal Notes<textarea name="notes" rows="3" placeholder="Internal context, constraints, special instructions, or CRM notes."></textarea></label>
+    </div>
+    <div class="form-actions"><button class="button primary" type="submit">Create Job and Generate AI Recommendation</button></div>
+  </section>
+</form>
+
+<section class="card muted-card">
+  <h2>Required Before Confirmation</h2>
+  <p class="subtle">The system may generate a recommendation immediately, but it will not move the job to the confirmed technician calendar until these fields are complete and approved by a coordinator.</p>
+  <div class="chips">{% for field in required_fields %}<span>{{ field.label }}</span>{% endfor %}</div>
+</section>
+{% endblock %}

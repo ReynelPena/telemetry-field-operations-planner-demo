@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% block title %}Job {{ job.id }}{% endblock %}
+{% block page_title %}{{ job.po_number or ('Job #' ~ job.id) }} - {{ job.customer_name }}{% endblock %}
+{% block page_subtitle %}Required information gate, customer/dealer portal, production tracking, AI recommendation, and coordinator approval.{% endblock %}
+
+{% block content %}
+<section class="card readiness-card {% if not readiness.is_complete %}blocked{% endif %}">
+  <div class="section-head">
+    <h2>Confirmation Readiness</h2>
+    <span class="status {{ job.status }}">{{ job.status|replace('_', ' ')|title }}</span>
+  </div>
+  <div class="readiness-grid">
+    <div>
+      <div class="progress large"><i style="width: {{ readiness.completion_percent }}%"></i></div>
+      <p><strong>{{ readiness.completion_percent }}%</strong> of required scheduling information is complete.</p>
+      {% if readiness.is_complete %}
+        <p class="success-text">Required information is complete. Coordinator approval is allowed.</p>
+      {% else %}
+        <p class="danger-text">This job cannot be confirmed or assigned to the technician calendar until missing information is completed.</p>
+      {% endif %}
+    </div>
+    <div>
+      <h3>Missing Required Fields</h3>
+      {% if readiness.missing_fields %}
+        <ul class="missing-list">
+          {% for field in readiness.missing_fields %}<li><strong>{{ field.label }}</strong><span>{{ field.owner|title }}</span></li>{% endfor %}
+        </ul>
+      {% else %}
+        <p class="success-text">No required fields missing.</p>
+      {% endif %}
+    </div>
+    <div>
+      <h3>Customer / Dealer Portal</h3>
+      <p class="subtle">Send this tokenized link to the customer or dealer so they can complete missing site, contact, voltage, and vehicle information.</p>
+      <code>{{ request.base_url }}portal/{{ job.portal_token }}</code>
+      <form method="post" action="/jobs/{{ job.id }}/send-reminders" class="top-gap">
+        <button class="button" type="submit">Queue Missing Info Reminders</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section class="two-col detail-layout">
+  <article class="card">
+    <div class="section-head"><h2>Job Summary</h2><a class="button" href="/portal/{{ job.portal_token }}" target="_blank">Open Portal</a></div>
+    <dl class="details">
+      <dt>PO</dt><dd>{{ job.po_number or '-' }}</dd>
+      <dt>HubSpot Deal</dt><dd>{{ job.hubspot_deal_id or '-' }}</dd>
+      <dt>Customer</dt><dd>{{ job.customer_name }} / {{ job.customer_type }}</dd>
+      <dt>Customer Contact</dt><dd>{{ job.customer_contact_name or '-' }}<br>{{ job.customer_contact_email or '-' }}<br>{{ job.customer_contact_phone or '-' }}</dd>
+      <dt>Dealer Contact</dt><dd>{{ job.dealer_name or '-' }}<br>{{ job.dealer_contact_name or '' }} {{ job.dealer_contact_email or '' }}</dd>
+      <dt>Sales Rep</dt><dd>{{ job.sales_rep_name or '-' }}<br>{{ job.sales_rep_email or '-' }}</dd>
+      <dt>Location</dt><dd>{{ job.site_address or '-' }}<br>{{ job.site_city or '-' }}, {{ job.site_state or '-' }} {{ job.site_zip or '' }}</dd>
+      <dt>Site Contact</dt><dd>{{ job.site_contact_name or '-' }}<br>{{ job.site_contact_phone or '-' }}<br>{{ job.site_contact_email or '-' }}</dd>
+      <dt>Access</dt><dd>{{ job.site_access_hours or '-' }}<br>{{ job.site_access_notes or '' }}</dd>
+      <dt>Customer Date Request</dt><dd>{{ job.requested_date_type|title }} | {{ job.requested_date }}{% if job.requested_end_date %} to {{ job.requested_end_date }}{% endif %}<br><small>{{ job.date_flexibility_notes or '' }}</small></dd>
+      <dt>AI Recommended Schedule</dt><dd>{{ job.suggested_scheduled_start or 'No suggestion yet' }}{% if job.suggested_scheduled_end %} - {{ job.suggested_scheduled_end }}{% endif %}<br><small>{{ job.suggested_schedule_reason or '' }}</small></dd>
+      <dt>Confirmed Schedule</dt><dd>{{ job.scheduled_start or 'Not confirmed' }}{% if job.scheduled_end %} - {{ job.scheduled_end }}{% endif %}</dd>
+      <dt>Assigned Installer</dt><dd>{{ job.installer_name or 'Not assigned' }}</dd>
+      <dt>AI Suggested Installer</dt><dd>{{ job.suggested_installer_name or 'No suggestion yet' }}</dd>
+    </dl>
+  </article>
+
+  <article class="card">
+    <h2>Vehicle / Production</h2>
+    <dl class="details">
+      <dt>Vehicle</dt><dd>{{ job.quantity }} x {{ job.vehicle_make or '-' }} {{ job.vehicle_model or '' }} {{ job.fuel_type or '' }}</dd>
+      <dt>Voltage</dt><dd>{{ job.vehicle_voltage or '-' }}</dd>
+      <dt>Asset IDs</dt><dd class="preline">{{ job.vehicle_asset_ids or '-' }}</dd>
+      <dt>Type</dt><dd>{{ job.installation_type }}</dd>
+      <dt>Difficulty</dt><dd><span class="badge complexity-{{ job.complexity }}">{{ job.complexity }}/5</span></dd>
+      <dt>Estimated Labor</dt><dd>{{ job.estimated_minutes }} min</dd>
+      <dt>Shipment</dt><dd>{{ job.shipment_carrier or '-' }} {{ job.shipment_tracking_number or '' }}<br>{% if job.order_ready %}<span class="success-text">Production marked ready</span>{% else %}<span class="danger-text">Production / tracking not ready</span>{% endif %}</dd>
+    </dl>
+
+    <form method="post" action="/jobs/{{ job.id }}/production" class="inline-update">
+      <h3>Update Production Tracking</h3>
+      <label>Carrier<input name="shipment_carrier" value="{{ job.shipment_carrier }}"></label>
+      <label>Tracking Number<input name="shipment_tracking_number" value="{{ job.shipment_tracking_number }}"></label>
+      <label class="check"><input type="checkbox" name="order_ready" value="yes" {% if job.order_ready %}checked{% endif %}> Order ready / shipped</label>
+      <button class="button" type="submit">Save Tracking</button>
+    </form>
+  </article>
+</section>
+
+
+<section class="card">
+  <div class="section-head">
+    <h2>Recommended Installation Date Options</h2>
+    <span>{{ schedule_plan.window.label if schedule_plan.window else 'Scheduling window not available' }}</span>
+  </div>
+  <p class="subtle">The system evaluates the customer's requested date or date range against technician availability, current confirmed work, workload, skill match, and nearby route opportunities. Coordinator approval is still required.</p>
+  <div class="ranking compact-ranking">
+    {% for option in schedule_plan.options %}
+      <article class="rank-card {% if loop.first %}best{% endif %}">
+        <div class="rank-score">{{ option.score }}</div>
+        <div>
+          <h3>{{ loop.index }}. {{ option.start }} - {{ option.end }}</h3>
+          <p><strong>{{ option.installer_name }}</strong> | {{ option.date_relation }} | route matches: {{ option.route_matches }}</p>
+          <ul>
+            {% for reason in option.reasons %}<li>{{ reason }}</li>{% endfor %}
+            {% for warning in option.warnings %}<li class="warn">{{ warning }}</li>{% endfor %}
+          </ul>
+        </div>
+      </article>
+    {% else %}
+      <p class="empty">No feasible schedule option was found. Expand the date range, review technician coverage, or adjust workload manually.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="two-col detail-layout">
+  <article class="card technical-card">
+    <h2>Technical Recommendation</h2>
+    <div class="technical-section"><h3>Materials</h3><p>{{ job.required_materials or recommendation.required_materials or 'No special materials registered.' }}</p></div>
+    <div class="technical-section"><h3>Tools</h3><p>{{ job.required_tools or recommendation.required_tools or 'No special tools registered.' }}</p></div>
+    <div class="technical-section"><h3>Checklist</h3><p class="preline">{{ job.checklist or recommendation.checklist or 'No checklist registered.' }}</p></div>
+    <div class="technical-section warning-box"><h3>Risks / Notes</h3><p class="preline">{{ job.risk_notes or recommendation.risk_notes or 'No special risks registered.' }}</p></div>
+  </article>
+
+  <article class="card approval-card">
+    <h2>Coordinator Approval</h2>
+    <p class="subtle">The AI recommendation is advisory. The coordinator must approve before the job becomes confirmed on the calendar.</p>
+    <pre class="recommendation-summary">{{ job.ai_recommendation_summary or 'No AI summary yet.' }}</pre>
+    <form method="post" action="/jobs/{{ job.id }}/refresh" class="top-gap"><button class="button" type="submit">Refresh AI Recommendation</button></form>
+    <form method="post" action="/jobs/{{ job.id }}/approve" class="inline-update top-gap">
+      <label>Approved By<input name="approved_by" value="Coordinator"></label>
+      <label>Recommended Schedule to Confirm
+        <select name="schedule_choice">
+          {% for option in schedule_plan.options %}
+            <option value="{{ option.installer_id }}||{{ option.start }}||{{ option.end }}" {% if loop.first %}selected{% endif %}>{{ option.start }} - {{ option.end }} | {{ option.installer_name }} | score {{ option.score }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Manual Installer Override
+        <select name="installer_id">
+          <option value="">Use selected schedule option</option>
+          {% for installer in installers %}
+            <option value="{{ installer.id }}" {% if job.suggested_installer_id == installer.id or job.assigned_installer_id == installer.id %}selected{% endif %}>{{ installer.name }} - {{ installer.home_city }}, {{ installer.home_state }} - max {{ installer.max_complexity }}/5</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>Manual Start Override<input name="scheduled_start" placeholder="YYYY-MM-DD HH:MM"></label>
+      <label>Manual End Override<input name="scheduled_end" placeholder="YYYY-MM-DD HH:MM"></label>
+      <button class="button primary" type="submit">Approve and Confirm Schedule</button>
+      {% if not readiness.is_complete %}<p class="danger-text">Approval will be blocked until missing required information is completed. Clicking approve will queue reminders.</p>{% endif %}
+    </form>
+  </article>
+</section>
+
+<section class="card">
+  <div class="section-head"><h2>Smart Installer Ranking</h2><span>Coverage, distance, skills, difficulty, workload, and site state.</span></div>
+  <div class="ranking">
+    {% for score in recommendation.ranked_installers %}
+      <article class="rank-card {% if loop.first %}best{% endif %}">
+        <div class="rank-score">{{ score.score }}</div>
+        <div>
+          <h3>{{ loop.index }}. {{ score.installer.name }}</h3>
+          <p>{{ score.installer.home_city }}, {{ score.installer.home_state }} | Max difficulty {{ score.installer.max_complexity }}/5</p>
+          <div class="chips"><span>{{ score.installer.coverage_states }}</span><span>{{ score.installer.skill_tags }}</span></div>
+          <ul>
+            {% for reason in score.reasons %}<li>{{ reason }}</li>{% endfor %}
+            {% for warning in score.warnings %}<li class="warn">{{ warning }}</li>{% endfor %}
+          </ul>
+          <form method="post" action="/jobs/{{ job.id }}/suggest-installer">
+            <input type="hidden" name="installer_id" value="{{ score.installer.id }}">
+            <button class="button {% if loop.first %}primary{% endif %}" type="submit">Save as Suggested Installer</button>
+          </form>
+        </div>
+      </article>
+    {% else %}
+      <p class="empty">No active installers available for recommendation.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="card">
+  <h2>Notifications for This Job</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Created</th><th>Recipient</th><th>Subject</th><th>Status</th></tr></thead>
+      <tbody>
+      {% for note in notifications %}
+        <tr><td>{{ note.created_at }}</td><td>{{ note.recipient_type }}<br><small>{{ note.recipient_email }}</small></td><td>{{ note.subject }}</td><td><span class="status {{ note.status }}">{{ note.status|title }}</span></td></tr>
+      {% else %}
+        <tr><td colspan="4" class="empty">No notifications queued yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

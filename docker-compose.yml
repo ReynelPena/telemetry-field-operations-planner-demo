@@ -1,0 +1,11 @@
+services:
+  telemetry-field-operations-planner:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - TIS_DB_PATH=/app/data/telemetry_scheduler.db
+      - PUBLIC_BASE_URL=http://127.0.0.1:8000
+      - SCHEDULING_TEAM_EMAIL=installation-scheduling@example.com

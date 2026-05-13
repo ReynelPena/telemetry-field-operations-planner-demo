@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Integrations{% endblock %}
+{% block page_title %}CRM, PO, Production, and Scheduling Integrations{% endblock %}
+{% block page_subtitle %}Connect HubSpot or another CRM so POs automatically create installation jobs, then update production tracking before coordinator approval.{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h2>Recommended End-to-End Flow</h2>
+  <div class="flow">
+    <div><strong>1</strong><span>HubSpot deal reaches PO received stage.</span></div>
+    <div><strong>2</strong><span>Planner creates a job and validates mandatory installation data.</span></div>
+    <div><strong>3</strong><span>Production updates carrier and tracking number when hardware is ready.</span></div>
+    <div><strong>4</strong><span>Coordinator approves the AI route, technician, and schedule.</span></div>
+  </div>
+</section>
+
+<section class="two-col">
+  <article class="card">
+    <h2>CRM PO Intake Endpoint</h2>
+    <p class="subtle">POST JSON to create a job when a HubSpot deal or PO requires field installation by your team.</p>
+    <code>POST /api/crm/hubspot/po</code>
+    <pre class="recommendation-summary">{
+  "source_system": "HubSpot",
+  "hubspot_deal_id": "123456789",
+  "po_number": "PO-12345",
+  "customer_name": "Example Fleet",
+  "customer_contact_email": "customer@example.com",
+  "sales_rep_email": "sales@example.com",
+  "installation_required": true,
+  "requested_date": "2026-06-01",
+  "site_city": "Dallas",
+  "site_state": "TX",
+  "vehicle_make": "Toyota",
+  "vehicle_model": "LP",
+  "fuel_type": "LP",
+  "quantity": 10
+}</pre>
+  </article>
+
+  <article class="card">
+    <h2>Production Tracking Endpoint</h2>
+    <p class="subtle">POST when the production team has organized the order and shipping/tracking is available.</p>
+    <code>POST /api/production/tracking</code>
+    <pre class="recommendation-summary">{
+  "po_number": "PO-12345",
+  "shipment_carrier": "UPS",
+  "shipment_tracking_number": "1Z999999999",
+  "order_ready": true
+}</pre>
+  </article>
+</section>
+
+<section class="card muted-card">
+  <h2>Confirmation Rule</h2>
+  <p>A job may exist as soon as the PO arrives. However, it will remain in <strong>Waiting Required Info</strong> or <strong>Pending Approval</strong> until the required fields, production tracking, AI recommendation, and coordinator approval are complete.</p>
+</section>
+
+<section class="card">
+  <div class="section-head"><h2>Recent Integration Events</h2><span>{{ events|length }} shown</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Created</th><th>Source</th><th>External ID</th><th>Event</th><th>Job</th><th>Status</th></tr></thead>
+      <tbody>
+      {% for event in events %}
+        <tr><td>{{ event.created_at }}</td><td>{{ event.source_system }}</td><td>{{ event.external_id }}</td><td>{{ event.event_type }}</td><td>{% if event.job_id %}<a href="/jobs/{{ event.job_id }}">Job #{{ event.job_id }}</a>{% else %}-{% endif %}</td><td>{{ event.status }}</td></tr>
+      {% else %}
+        <tr><td colspan="6" class="empty">No integration events yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

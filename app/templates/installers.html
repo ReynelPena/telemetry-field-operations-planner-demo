@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Installers{% endblock %}
+{% block page_title %}Installers{% endblock %}
+{% block page_subtitle %}Manage coverage, technical skills, and difficulty capacity for smarter assignment.{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h2>Add Installer</h2>
+  <form method="post" action="/installers" class="form-grid">
+    <label>Name<input name="name" required placeholder="Full name"></label>
+    <label>Email<input name="email" type="email" placeholder="installer@company.com"></label>
+    <label>Phone<input name="phone" placeholder="+1..."></label>
+    <label>Home City<input name="home_city" placeholder="Dallas"></label>
+    <label>Home State<input name="home_state" maxlength="2" required placeholder="TX"></label>
+    <label>Coverage States<input name="coverage_states" placeholder="TX, OK, LA"></label>
+    <label>Max Difficulty
+      <select name="max_complexity">
+        <option value="1">1 - Basic</option>
+        <option value="2">2</option>
+        <option value="3" selected>3 - Intermediate</option>
+        <option value="4">4 - Advanced</option>
+        <option value="5">5 - Expert</option>
+      </select>
+    </label>
+    <label class="span-2">Skills / Makes / Tags<input name="skill_tags" placeholder="toyota lp, forklifts, diesel trucks, j1939, displays"></label>
+    <button class="button primary" type="submit">Save Installer</button>
+  </form>
+</section>
+
+<section class="card">
+  <div class="section-head"><h2>Available Team</h2><span>{{ installers|length }} records</span></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Name</th><th>Base</th><th>Coverage</th><th>Skills</th><th>Max</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+      {% for installer in installers %}
+        <tr class="{% if not installer.active %}muted-row{% endif %}">
+          <td><strong>{{ installer.name }}</strong><br><small>{{ installer.email }} {{ installer.phone }}</small></td>
+          <td>{{ installer.home_city }}, {{ installer.home_state }}</td>
+          <td>{{ installer.coverage_states }}</td>
+          <td>{{ installer.skill_tags }}</td>
+          <td><span class="badge complexity-{{ installer.max_complexity }}">{{ installer.max_complexity }}/5</span></td>
+          <td>{{ 'Active' if installer.active else 'Inactive' }}</td>
+          <td>
+            <form method="post" action="/installers/{{ installer.id }}/toggle">
+              <button class="button ghost" type="submit">{{ 'Deactivate' if installer.active else 'Activate' }}</button>
+            </form>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="7" class="empty">No installers yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

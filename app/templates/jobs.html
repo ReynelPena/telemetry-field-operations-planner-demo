@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Jobs{% endblock %}
+{% block page_title %}All Installation Jobs{% endblock %}
+{% block page_subtitle %}Complete job list with PO, status, readiness, AI suggestion, assigned technician, and technical complexity.{% endblock %}
+
+{% block content %}
+<section class="card">
+  <div class="section-head"><h2>Jobs</h2><a class="button primary" href="/jobs/new">+ New PO / Job</a></div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>PO / Job</th><th>Customer</th><th>Customer Request</th><th>AI Schedule</th><th>Location</th><th>Vehicle</th><th>Readiness</th><th>Installer</th><th>Status</th></tr></thead>
+      <tbody>
+      {% for job in jobs %}
+        <tr>
+          <td><a href="/jobs/{{ job.id }}"><strong>{{ job.po_number or ('Job #' ~ job.id) }}</strong></a><br><small>{{ job.hubspot_deal_id or '' }}</small></td>
+          <td>{{ job.customer_name }}<br><small>{{ job.customer_type }}</small></td>
+          <td>{{ job.requested_date_type|title }}<br><small>{{ job.requested_date }}{% if job.requested_end_date %} to {{ job.requested_end_date }}{% endif %}</small></td>
+          <td>{{ job.scheduled_start or job.suggested_scheduled_start or 'Not ready' }}<br><small>{{ job.installer_name or job.suggested_installer_name or '' }}</small></td>
+          <td>{{ job.site_city or '-' }}, {{ job.site_state or '-' }}<br><small>{{ job.site_address or 'Missing address' }}</small></td>
+          <td>{{ job.quantity }} x {{ job.vehicle_make or '-' }} {{ job.vehicle_model or '' }} {{ job.fuel_type or '' }}<br><small>Difficulty {{ job.complexity }}/5 | {{ job.estimated_minutes }} min</small></td>
+          <td><div class="progress"><i style="width: {{ job.info_completion_percent }}%"></i></div><small>{{ job.info_completion_percent }}%</small></td>
+          <td>{{ job.installer_name or ('Suggested: ' ~ job.suggested_installer_name if job.suggested_installer_name else 'Unassigned') }}</td>
+          <td><span class="status {{ job.status }}">{{ job.status|replace('_', ' ')|title }}</span></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="9" class="empty">No jobs yet.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

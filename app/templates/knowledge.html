@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Technical Knowledge{% endblock %}
+{% block page_title %}Technical Knowledge Base{% endblock %}
+{% block page_subtitle %}Train the bot with field rules, tools, materials, checklists, and known risks.{% endblock %}
+
+{% block content %}
+<section class="card">
+  <h2>Add Technical Rule</h2>
+  <form method="post" action="/knowledge" class="form-grid">
+    <label class="span-2">Title<input name="title" required placeholder="Toyota LP - longer display mounting screws"></label>
+    <label>Make<input name="vehicle_make" placeholder="Toyota"></label>
+    <label>Model<input name="vehicle_model" placeholder="LP"></label>
+    <label>Fuel Type<input name="fuel_type" placeholder="LP"></label>
+    <label>Difficulty Adjustment
+      <select name="complexity_adjustment">
+        <option value="-1">-1</option>
+        <option value="0" selected>0</option>
+        <option value="1">+1</option>
+        <option value="2">+2</option>
+      </select>
+    </label>
+    <label class="span-2">Triggers / Keywords<input name="triggers" placeholder="toyota lp, propane, display mount, longer screws"></label>
+    <label class="span-2">Recommended Tools<input name="required_tools" placeholder="drill, multimeter, Phillips bits"></label>
+    <label class="span-2">Recommended Materials<input name="required_materials" placeholder="longer screws, cable ties, extra connectors"></label>
+    <label class="span-3">Checklist<textarea name="checklist" rows="3" placeholder="Steps the installer should check before leaving"></textarea></label>
+    <label class="span-3">Risks / Notes<textarea name="risk_notes" rows="3" placeholder="Common issues and how to prevent them"></textarea></label>
+    <button class="button primary" type="submit">Save Rule</button>
+  </form>
+</section>
+
+<section class="card">
+  <div class="section-head"><h2>Active and Historical Rules</h2><span>{{ rules|length }} records</span></div>
+  {% for rule in rules %}
+    <article class="rule-card {% if not rule.active %}muted-row{% endif %}">
+      <div class="rule-title">
+        <h3>{{ rule.title }}</h3>
+        <form method="post" action="/knowledge/{{ rule.id }}/toggle">
+          <button class="button ghost" type="submit">{{ 'Deactivate' if rule.active else 'Activate' }}</button>
+        </form>
+      </div>
+      <div class="chips">
+        {% if rule.vehicle_make %}<span>{{ rule.vehicle_make }}</span>{% endif %}
+        {% if rule.vehicle_model %}<span>{{ rule.vehicle_model }}</span>{% endif %}
+        {% if rule.fuel_type %}<span>{{ rule.fuel_type }}</span>{% endif %}
+        <span>Adjustment {{ rule.complexity_adjustment }}</span>
+      </div>
+      <p><strong>Triggers:</strong> {{ rule.triggers }}</p>
+      <p><strong>Tools:</strong> {{ rule.required_tools or '-' }}</p>
+      <p><strong>Materials:</strong> {{ rule.required_materials or '-' }}</p>
+      <p><strong>Checklist:</strong> {{ rule.checklist or '-' }}</p>
+      <p><strong>Risks:</strong> {{ rule.risk_notes or '-' }}</p>
+    </article>
+  {% else %}
+    <p class="empty">No rules yet.</p>
+  {% endfor %}
+</section>
+{% endblock %}
